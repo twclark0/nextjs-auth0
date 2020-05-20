@@ -1,13 +1,19 @@
-import Head from 'next/head'
+import Head from "next/head";
+import auth0 from "../utils/auth0";
 
-export default function Home() {
+function Home(props) {
+  console.log(props);
   return (
     <div className="container">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
+      {props?.session?.user ? (
+        <a href="/api/logout">Logout</a>
+      ) : (
+        <a href="/api/login">Login</a>
+      )}
       <main>
         <h1 className="title">
           Welcome to <a href="https://nextjs.org">Next.js!</a>
@@ -54,7 +60,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
         </a>
       </footer>
@@ -205,5 +211,12 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
 }
+
+export async function getServerSideProps(context) {
+  const session = await auth0.getSession(context.req);
+  return { props: { session } };
+}
+
+export default Home;
